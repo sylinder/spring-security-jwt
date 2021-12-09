@@ -7,3 +7,14 @@ spring:
     username: root
     password: root
     url: jdbc:mysql://localhost:3306/test
+
+security:
+  ignore-urls:
+    - /users/login
+    - /users/register
+    - /hello
+
+jwt:
+  header: Authorization
+  secret: handsome
+  expire: 604800
