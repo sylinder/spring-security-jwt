@@ -9,6 +9,7 @@ import com.caps.springsecurityjwt.domain.entity.UserPo;
 import com.caps.springsecurityjwt.domain.vo.User;
 import com.caps.springsecurityjwt.exception.CommonException;
 import com.caps.springsecurityjwt.repository.UserRepository;
+import com.caps.springsecurityjwt.repository.UserRoleRepository;
 import com.caps.springsecurityjwt.utils.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -58,5 +59,10 @@ public class UserService {
                 .build();
 
         return CommonResult.success(tokenInfo);
+    }
+
+    public CommonResult<UserDTO> findByUsername(String username) {
+        UserPo userPo = userRepository.findByUsername(username);
+        return CommonResult.success(User.fromPo(userPo).toDTO());
     }
 }

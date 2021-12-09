@@ -6,6 +6,7 @@ import com.caps.springsecurityjwt.domain.dto.RegisterForm;
 import com.caps.springsecurityjwt.domain.dto.TokenInfo;
 import com.caps.springsecurityjwt.domain.dto.UserDTO;
 import com.caps.springsecurityjwt.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,5 +34,11 @@ public class UserController {
     @PostMapping("/login")
     public CommonResult<TokenInfo> login(@RequestBody LoginForm loginForm) {
         return userService.login(loginForm);
+    }
+
+    @GetMapping("/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public CommonResult<UserDTO> findByUsername(@PathVariable("username") String username) {
+        return userService.findByUsername(username);
     }
 }
