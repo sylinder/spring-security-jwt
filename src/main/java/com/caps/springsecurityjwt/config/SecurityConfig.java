@@ -38,7 +38,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(securityProperties.getIgnoreUrls().toArray(new String[0])).permitAll()
                 .anyRequest().authenticated()
-                .and().exceptionHandling().authenticationEntryPoint(new MyEntryPoint());
+                .and().exceptionHandling()
+                    .authenticationEntryPoint(new MyEntryPoint())
+                    .accessDeniedHandler(new MyAccessDeniedHandler());
 
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
 

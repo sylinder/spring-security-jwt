@@ -5,6 +5,7 @@ import com.caps.springsecurityjwt.repository.UserRoleRepository;
 import com.caps.springsecurityjwt.service.UserDetailsServiceImpl;
 import com.caps.springsecurityjwt.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,9 +20,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
@@ -31,13 +31,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     private JwtUtil jwtUtil;
 
-    private UserRoleRepository userRoleRepository;
-
-    public JwtAuthenticationTokenFilter(UserDetailsServiceImpl userDetailsService, JwtTokenProperties jwtTokenProperties, JwtUtil jwtUtil, UserRoleRepository userRoleRepository) {
+    public JwtAuthenticationTokenFilter(UserDetailsServiceImpl userDetailsService, JwtTokenProperties jwtTokenProperties, JwtUtil jwtUtil) {
         this.userDetailsService = userDetailsService;
         this.jwtTokenProperties = jwtTokenProperties;
         this.jwtUtil = jwtUtil;
-        this.userRoleRepository = userRoleRepository;
     }
 
     @Override
@@ -47,10 +44,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             String username = claims.getSubject();
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (userDetails != null) {
-                List<UserRolePo> userRoles = userRoleRepository.findByUsername(username);
-                List<String> roles = userRoles.stream().map(UserRolePo::getName).collect(Collectors.toList());
-                List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(String.join(",", roles));
-                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), authorities);
+                log.info("userDetails: " + userDetails);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
