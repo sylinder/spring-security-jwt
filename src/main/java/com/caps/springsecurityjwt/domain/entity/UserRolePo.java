@@ -20,7 +20,7 @@ public class UserRolePo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    private Long userId;
 
-    private String name;
+    private String roleName;
 }

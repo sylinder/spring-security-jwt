@@ -4,7 +4,6 @@ import com.caps.springsecurityjwt.domain.entity.UserPo;
 import com.caps.springsecurityjwt.domain.entity.UserRolePo;
 import com.caps.springsecurityjwt.domain.vo.SecurityUser;
 import com.caps.springsecurityjwt.repository.UserRepository;
-import com.caps.springsecurityjwt.repository.UserRoleRepository;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,11 +18,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private UserRepository userRepository;
 
-    private UserRoleRepository userRoleRepository;
-
-    public UserDetailsServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository) {
+    public UserDetailsServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.userRoleRepository = userRoleRepository;
     }
 
     @Override
@@ -32,8 +28,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (userPo == null) {
             throw new UsernameNotFoundException("Username Not Found.");
         }
-        List<UserRolePo> userRolePos = userRoleRepository.findByUsername(username);
-        List<String> roles = userRolePos.stream().map(UserRolePo::getName).collect(Collectors.toList());
+        List<UserRolePo> userRolePos = userPo.getUserRolePos();
+        List<String> roles = userRolePos.stream().map(UserRolePo::getRoleName).collect(Collectors.toList());
 
         return SecurityUser.builder()
                 .username(userPo.getUsername())

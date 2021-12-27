@@ -31,7 +31,7 @@ public class User {
             return null;
         }
         return User.builder()
-                .id(userPo.getId())
+                .id(userPo.getUserId())
                 .username(userPo.getUsername())
                 .password(userPo.getPassword())
                 .build();
